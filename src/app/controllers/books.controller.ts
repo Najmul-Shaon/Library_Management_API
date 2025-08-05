@@ -44,7 +44,7 @@ booksRoutes.get("/books", async (req: Request, res: Response) => {
   }
 });
 
-booksRoutes.get("/book/:bookId", async (req: Request, res: Response) => {
+booksRoutes.get("/books/:bookId", async (req: Request, res: Response) => {
   try {
     const bookId = req.params.bookId;
     const book = await Books.findById(bookId);
@@ -58,7 +58,52 @@ booksRoutes.get("/book/:bookId", async (req: Request, res: Response) => {
     console.log(error);
     res.status(400).json({
       success: false,
-      message: "Book retrieved failed",
+      message: "Book retrieve failed",
+      error: error,
+    });
+  }
+});
+
+booksRoutes.put("/books/:bookId", async (req: Request, res: Response) => {
+  try {
+    const bookId = req.params.bookId;
+    const updateBody = { ...req.body };
+
+    const updateBook = await Books.findByIdAndUpdate(bookId, updateBody, {
+      new: true,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Book updated successfully",
+      data: updateBook,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      success: false,
+      message: "Book update failed",
+      error: error,
+    });
+  }
+});
+
+booksRoutes.delete("/books/:bookId", async (req: Request, res: Response) => {
+  try {
+    const bookId = req.params.bookId;
+
+    const deletedBook = await Books.findByIdAndDelete(bookId);
+
+    res.status(201).json({
+      success: true,
+      message: "Book deleted successfully",
+      data: deletedBook,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      success: false,
+      message: "Book delete failed",
       error: error,
     });
   }
