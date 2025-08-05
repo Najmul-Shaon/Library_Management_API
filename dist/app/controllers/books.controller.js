@@ -54,7 +54,7 @@ exports.booksRoutes.get("/books", (req, res) => __awaiter(void 0, void 0, void 0
         });
     }
 }));
-exports.booksRoutes.get("/book/:bookId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.booksRoutes.get("/books/:bookId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const bookId = req.params.bookId;
         const book = yield books_model_1.Books.findById(bookId);
@@ -68,7 +68,48 @@ exports.booksRoutes.get("/book/:bookId", (req, res) => __awaiter(void 0, void 0,
         console.log(error);
         res.status(400).json({
             success: false,
-            message: "Book retrieved failed",
+            message: "Book retrieve failed",
+            error: error,
+        });
+    }
+}));
+exports.booksRoutes.put("/books/:bookId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bookId = req.params.bookId;
+        const updateBody = Object.assign({}, req.body);
+        const updateBook = yield books_model_1.Books.findByIdAndUpdate(bookId, updateBody, {
+            new: true,
+        });
+        res.status(201).json({
+            success: true,
+            message: "Book updated successfully",
+            data: updateBook,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({
+            success: false,
+            message: "Book update failed",
+            error: error,
+        });
+    }
+}));
+exports.booksRoutes.delete("/books/:bookId", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const bookId = req.params.bookId;
+        const deletedBook = yield books_model_1.Books.findByIdAndDelete(bookId);
+        res.status(201).json({
+            success: true,
+            message: "Book deleted successfully",
+            data: deletedBook,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({
+            success: false,
+            message: "Book delete failed",
             error: error,
         });
     }
