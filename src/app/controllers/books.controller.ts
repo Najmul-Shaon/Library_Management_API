@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { Books } from "../modules/books.model";
+import { Borrow } from "../modules/borrow.module";
 
 export const booksRoutes = express.Router();
 
@@ -104,6 +105,28 @@ booksRoutes.delete("/books/:bookId", async (req: Request, res: Response) => {
     res.status(400).json({
       success: false,
       message: "Book delete failed",
+      error: error,
+    });
+  }
+});
+
+booksRoutes.post("/borrow", async (req: Request, res: Response) => {
+  try {
+    const borrowRequestBody = { ...req.body };
+    // console.log(borrowRequestBody);
+
+    const borrow = await Borrow.create(borrowRequestBody);
+
+    res.status(201).json({
+      success: true,
+      message: "Book borrowed successfully",
+      data: borrow,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({
+      success: false,
+      message: error instanceof Error ? error.message : String(error),
       error: error,
     });
   }
