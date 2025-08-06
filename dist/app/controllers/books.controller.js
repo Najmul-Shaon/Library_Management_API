@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.booksRoutes = void 0;
 const express_1 = __importDefault(require("express"));
 const books_model_1 = require("../modules/books.model");
+const borrow_module_1 = require("../modules/borrow.module");
 exports.booksRoutes = express_1.default.Router();
 exports.booksRoutes.post("/books", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -110,6 +111,26 @@ exports.booksRoutes.delete("/books/:bookId", (req, res) => __awaiter(void 0, voi
         res.status(400).json({
             success: false,
             message: "Book delete failed",
+            error: error,
+        });
+    }
+}));
+exports.booksRoutes.post("/borrow", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const borrowRequestBody = Object.assign({}, req.body);
+        // console.log(borrowRequestBody);
+        const borrow = yield borrow_module_1.Borrow.create(borrowRequestBody);
+        res.status(201).json({
+            success: true,
+            message: "Book borrowed successfully",
+            data: borrow,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({
+            success: false,
+            message: error instanceof Error ? error.message : String(error),
             error: error,
         });
     }
