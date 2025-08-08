@@ -135,5 +135,55 @@ exports.booksRoutes.post("/borrow", (req, res) => __awaiter(void 0, void 0, void
         });
     }
 }));
-
-
+exports.booksRoutes.get("/borrow", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // const booksStatus = await Borrow.find();
+        const summary = yield borrow_module_1.Borrow.aggregate([
+            {
+                $addFields: {
+                    bookObjectId: { $toObjectId: "$book" },
+                },
+            },
+            {
+                $group: {
+                    _id: "$bookObjectId",
+                    totalQuantity: { $sum: "$quantity" },
+                },
+            },
+            {
+                $lookup: {
+                    from: "books",
+                    localField: "_id",
+                    foreignField: "_id",
+                    as: "bookDetails",
+                },
+            },
+            {
+                $unwind: "$bookDetails",
+            },
+            {
+                $project: {
+                    _id: 0,
+                    book: {
+                        title: "$bookDetails.title",
+                        isbn: "$bookDetails.isbn",
+                    },
+                    totalQuantity: 1,
+                },
+            },
+        ]);
+        res.status(200).json({
+            success: true,
+            message: "Borrowed books summary retrieved successfully",
+            data: summary,
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.status(400).json({
+            success: false,
+            message: "Borrowed books summary retrieve failed",
+            error: error,
+        });
+    }
+}));
