@@ -45,13 +45,14 @@ cd library_management_api
 
 # Install dependencies
 npm install
+```
 
 ## ▶️ Usage
 
 ```bash
 # To start the development server:
 npm run dev
-
+```
 
 ## 🧪 Examples
 
